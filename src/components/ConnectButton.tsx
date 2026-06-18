@@ -1,17 +1,44 @@
 import { useAccount, useDisconnect, useChainId, useSwitchChain } from "wagmi";
-import { useAppKit } from "@reown/appkit/react";
 import { Button } from "@/components/ui/button";
 import { shortAddress } from "@/lib/format";
 import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+
+// Reown AppKit references browser globals (HTMLElement) at module init,
+// so we must NOT statically import from "@reown/appkit/react" anywhere
+// that runs during SSR. Load it lazily on the client instead.
+function useOpenAppKit(): () => void {
+  const [open, setOpen] = useState<() => void>(() => () => {});
+  useEffect(() => {
+    let cancelled = false;
+    import("@reown/appkit/react")
+      .then((m) => {
+        if (cancelled) return;
+        setOpen(() => () => {
+          try {
+            m.useAppKit; // keep tree-shake happy
+            // modal singleton API
+            (m as unknown as { modal?: { open: () => void } }).modal?.open?.();
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      })
+      .catch((e) => console.error("AppKit load failed", e));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return open;
+}
 
 function ConnectButtonInner({ block }: { block: boolean }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
-  const { open } = useAppKit();
+  const open = useOpenAppKit();
 
   const baseClass = `gradient-primary text-primary-foreground font-semibold animate-pulse-glow ${block ? "w-full" : ""}`;
 
@@ -61,4 +88,11 @@ export function ConnectButton({ block = false }: { block?: boolean }) {
   }
 
   return <ConnectButtonInner block={block} />;
+}
+
+// Re-export the modal singleton helper for callers that want to open the
+// modal imperatively without going through the hook.
+export async function openAppKitModal() {
+  const m = await import("@reown/appkit/react");
+  (m as unknown as { modal?: { open: () => void } }).modal?.open?.();
 }

@@ -6,24 +6,14 @@ import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function ConnectButton({ block = false }: { block?: boolean }) {
+function ConnectButtonInner({ block }: { block: boolean }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const { open } = useAppKit();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   const baseClass = `gradient-primary text-primary-foreground font-semibold animate-pulse-glow ${block ? "w-full" : ""}`;
-
-  if (!mounted) {
-    return (
-      <Button disabled className={baseClass}>
-        <Wallet className="h-4 w-4 mr-2" /> Connect Wallet
-      </Button>
-    );
-  }
 
   if (!isConnected) {
     return (
@@ -54,4 +44,21 @@ export function ConnectButton({ block = false }: { block?: boolean }) {
       </Button>
     </div>
   );
+}
+
+export function ConnectButton({ block = false }: { block?: boolean }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const baseClass = `gradient-primary text-primary-foreground font-semibold animate-pulse-glow ${block ? "w-full" : ""}`;
+
+  if (!mounted) {
+    return (
+      <Button disabled className={baseClass}>
+        <Wallet className="h-4 w-4 mr-2" /> Connect Wallet
+      </Button>
+    );
+  }
+
+  return <ConnectButtonInner block={block} />;
 }

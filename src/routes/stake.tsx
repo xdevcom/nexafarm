@@ -55,9 +55,10 @@ function StakePage() {
   const wrongNetwork = isConnected && chainId !== CHAIN_ID;
 
   async function onApprove() {
+    if (amountNum < MIN_DEPOSIT) { toast.error(`Enter at least ${MIN_DEPOSIT} USDT before approving`); return; }
     await run("Approve USDT", {
       address: USDT_ADDRESS, abi: ERC20_ABI, functionName: "approve",
-      args: [CONTRACT_ADDRESS, toUsdt(1_000_000_000)],
+      args: [CONTRACT_ADDRESS, toUsdt(amount)],
     });
   }
 

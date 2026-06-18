@@ -1,48 +1,53 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { WagmiProvider, createConfig, http } from "wagmi";
+import { WagmiProvider, createConfig, http, type Config } from "wagmi";
 import { bsc } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createAppKit } from "@reown/appkit/react";
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { REOWN_PROJECT_ID, RPC_URL } from "@/config/contract";
 
-const networks = [bsc] as const;
-
-const wagmiAdapter = new WagmiAdapter({
-  networks: [bsc],
-  projectId: REOWN_PROJECT_ID,
-  ssr: false,
-  transports: { [bsc.id]: http(RPC_URL) },
-});
-
-// Fallback config used during SSR so wagmi hooks have a config in tree.
+// SSR-safe fallback config. Reown AppKit packages reference `HTMLElement`
+// at module init (Lit web components), so they MUST NOT be imported at
+// top level — only inside a client-only dynamic import.
 const ssrConfig = createConfig({
   chains: [bsc],
   transports: { [bsc.id]: http(RPC_URL) },
 });
 
-let appKitInitialized = false;
-function ensureAppKit() {
-  if (appKitInitialized || typeof window === "undefined") return;
-  appKitInitialized = true;
-  createAppKit({
-    adapters: [wagmiAdapter],
-    networks: [bsc],
-    projectId: REOWN_PROJECT_ID,
-    defaultNetwork: bsc,
-    metadata: {
-      name: "NexaFarm",
-      description: "NexaFarm — The Future of DeFi Staking",
-      url: typeof window !== "undefined" ? window.location.origin : "https://nexafarm.app",
-      icons: [],
-    },
-    features: { analytics: false, email: false, socials: false },
-    themeMode: "dark",
-    themeVariables: {
-      "--w3m-accent": "#22e07a",
-      "--w3m-border-radius-master": "12px",
-    },
-  });
+let clientConfigPromise: Promise<Config> | undefined;
+
+async function initAppKitClient(): Promise<Config> {
+  if (clientConfigPromise) return clientConfigPromise;
+  clientConfigPromise = (async () => {
+    const [{ createAppKit }, { WagmiAdapter }] = await Promise.all([
+      import("@reown/appkit/react"),
+      import("@reown/appkit-adapter-wagmi"),
+    ]);
+    const wagmiAdapter = new WagmiAdapter({
+      networks: [bsc],
+      projectId: REOWN_PROJECT_ID,
+      ssr: false,
+      transports: { [bsc.id]: http(RPC_URL) },
+    });
+    createAppKit({
+      adapters: [wagmiAdapter],
+      networks: [bsc],
+      projectId: REOWN_PROJECT_ID,
+      defaultNetwork: bsc,
+      metadata: {
+        name: "NexaFarm",
+        description: "NexaFarm — The Future of DeFi Staking",
+        url: window.location.origin,
+        icons: [],
+      },
+      features: { analytics: false, email: false, socials: false },
+      themeMode: "dark",
+      themeVariables: {
+        "--w3m-accent": "#22e07a",
+        "--w3m-border-radius-master": "12px",
+      },
+    });
+    return wagmiAdapter.wagmiConfig as unknown as Config;
+  })();
+  return clientConfigPromise;
 }
 
 const queryClient = new QueryClient({
@@ -50,13 +55,19 @@ const queryClient = new QueryClient({
 });
 
 export function Web3Provider({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+  const [config, setConfig] = useState<Config>(ssrConfig);
   useEffect(() => {
-    ensureAppKit();
-    setMounted(true);
+    let cancelled = false;
+    initAppKitClient()
+      .then((c) => {
+        if (!cancelled) setConfig(c);
+      })
+      .catch((err) => console.error("AppKit init failed", err));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const config = mounted ? wagmiAdapter.wagmiConfig : ssrConfig;
   return (
     <WagmiProvider config={config} reconnectOnMount>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

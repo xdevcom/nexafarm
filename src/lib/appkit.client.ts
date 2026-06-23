@@ -1,3 +1,5 @@
+import "@tanstack/react-start/client-only";
+
 import { createAppKit, modal } from "@reown/appkit/react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { http, type Config } from "wagmi";

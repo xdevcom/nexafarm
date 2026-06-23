@@ -4,6 +4,14 @@ import { shortAddress } from "@/lib/format";
 import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createIsomorphicFn } from "@tanstack/react-start";
+
+const loadOpenAppKitModal = createIsomorphicFn()
+  .server(async () => undefined)
+  .client(async () => {
+    const appkit = await import("@/lib/appkit.client");
+    return appkit.openAppKitModal;
+  });
 
 // Reown AppKit references browser globals (HTMLElement) at module init,
 // so we must NOT statically import from "@reown/appkit/react" anywhere
@@ -15,11 +23,12 @@ function useOpenAppKit(): () => void {
       return;
     }
     let cancelled = false;
-    import("@/lib/appkit-browser")
-      .then((m) => {
+    loadOpenAppKitModal()
+      .then((openModal) => {
         if (cancelled) return;
+        if (!openModal) return;
         setOpen(() => () => {
-          void m.openAppKitModal().catch((e) => console.error(e));
+          void openModal().catch((e) => console.error(e));
         });
       })
       .catch((e) => console.error("AppKit load failed", e));
@@ -94,7 +103,7 @@ export async function openAppKitModal() {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return;
   }
-  const m = await import("@/lib/appkit-browser");
-  await m.openAppKitModal();
+  const openModal = await loadOpenAppKitModal();
+  await openModal?.();
 }
 

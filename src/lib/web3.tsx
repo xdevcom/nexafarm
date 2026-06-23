@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { WagmiProvider, createConfig, http, type Config } from "wagmi";
 import { bsc } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { REOWN_PROJECT_ID, RPC_URL } from "@/config/contract";
+import { RPC_URL } from "@/config/contract";
 
 // SSR-safe fallback config. Reown AppKit packages reference `HTMLElement`
 // at module init (Lit web components), so they MUST NOT be imported at

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { shortAddress } from "@/lib/format";
 import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 // Reown AppKit references browser globals (HTMLElement) at module init,
 // so we must NOT statically import from "@reown/appkit/react" anywhere

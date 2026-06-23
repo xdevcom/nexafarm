@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { shortAddress } from "@/lib/format";
 import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 // Reown AppKit references browser globals (HTMLElement) at module init,
 // so we must NOT statically import from "@reown/appkit/react" anywhere
@@ -11,18 +11,15 @@ import { useEffect, useState, useCallback } from "react";
 function useOpenAppKit(): () => void {
   const [open, setOpen] = useState<() => void>(() => () => {});
   useEffect(() => {
+    if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
+      return;
+    }
     let cancelled = false;
-    import("@reown/appkit/react")
+    import("@/lib/appkit.client")
       .then((m) => {
         if (cancelled) return;
         setOpen(() => () => {
-          try {
-            m.useAppKit; // keep tree-shake happy
-            // modal singleton API
-            (m as unknown as { modal?: { open: () => void } }).modal?.open?.();
-          } catch (e) {
-            console.error(e);
-          }
+          void m.openAppKitModal().catch((e) => console.error(e));
         });
       })
       .catch((e) => console.error("AppKit load failed", e));
@@ -93,6 +90,9 @@ export function ConnectButton({ block = false }: { block?: boolean }) {
 // Re-export the modal singleton helper for callers that want to open the
 // modal imperatively without going through the hook.
 export async function openAppKitModal() {
-  const m = await import("@reown/appkit/react");
-  (m as unknown as { modal?: { open: () => void } }).modal?.open?.();
+  if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
+    return;
+  }
+  const m = await import("@/lib/appkit.client");
+  await m.openAppKitModal();
 }

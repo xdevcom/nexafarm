@@ -5,6 +5,10 @@ import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 
+function importBrowserOnly<T>(specifier: string): Promise<T> {
+  return new Function("s", "return import(s)")(specifier) as Promise<T>;
+}
+
 // Reown AppKit references browser globals (HTMLElement) at module init,
 // so we must NOT statically import from "@reown/appkit/react" anywhere
 // that runs during SSR. Load it lazily on the client instead.
@@ -15,7 +19,7 @@ function useOpenAppKit(): () => void {
       return;
     }
     let cancelled = false;
-    import("@reown/appkit/react")
+    importBrowserOnly<typeof import("@reown/appkit/react")>("@reown/appkit/react")
       .then((m) => {
         if (cancelled) return;
         setOpen(() => () => {
@@ -99,6 +103,6 @@ export async function openAppKitModal() {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return;
   }
-  const m = await import("@reown/appkit/react");
+  const m = await importBrowserOnly<typeof import("@reown/appkit/react")>("@reown/appkit/react");
   (m as unknown as { modal?: { open: () => void } }).modal?.open?.();
 }

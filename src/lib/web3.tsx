@@ -14,6 +14,10 @@ const ssrConfig = createConfig({
 
 let clientConfigPromise: Promise<Config> | undefined;
 
+function importBrowserOnly<T>(specifier: string): Promise<T> {
+  return new Function("s", "return import(s)")(specifier) as Promise<T>;
+}
+
 async function initAppKitClient(): Promise<Config> {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return ssrConfig;
@@ -21,8 +25,8 @@ async function initAppKitClient(): Promise<Config> {
   if (clientConfigPromise) return clientConfigPromise;
   clientConfigPromise = (async () => {
     const [{ createAppKit }, { WagmiAdapter }] = await Promise.all([
-      import("@reown/appkit/react"),
-      import("@reown/appkit-adapter-wagmi"),
+      importBrowserOnly<typeof import("@reown/appkit/react")>("@reown/appkit/react"),
+      importBrowserOnly<typeof import("@reown/appkit-adapter-wagmi")>("@reown/appkit-adapter-wagmi"),
     ]);
     const wagmiAdapter = new WagmiAdapter({
       networks: [bsc],

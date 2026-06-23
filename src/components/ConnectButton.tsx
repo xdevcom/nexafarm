@@ -15,7 +15,8 @@ function useOpenAppKit(): () => void {
       return;
     }
     let cancelled = false;
-    import("@/lib/appkit.client")
+    const mod = "@/lib/appkit.client";
+    (import(/* @vite-ignore */ mod) as Promise<typeof import("@/lib/appkit.client")>)
       .then((m) => {
         if (cancelled) return;
         setOpen(() => () => {
@@ -23,6 +24,7 @@ function useOpenAppKit(): () => void {
         });
       })
       .catch((e) => console.error("AppKit load failed", e));
+
     return () => {
       cancelled = true;
     };
@@ -93,6 +95,8 @@ export async function openAppKitModal() {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return;
   }
-  const m = await import("@/lib/appkit.client");
+  const mod = "@/lib/appkit.client";
+  const m = (await import(/* @vite-ignore */ mod)) as typeof import("@/lib/appkit.client");
   await m.openAppKitModal();
 }
+

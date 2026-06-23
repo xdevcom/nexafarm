@@ -16,8 +16,11 @@ async function initAppKitClient(): Promise<Config> {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return ssrConfig;
   }
-  const appkit = await import("@/lib/appkit.client");
+  const mod = "@/lib/appkit.client";
+  const appkit = (await import(/* @vite-ignore */ mod)) as typeof import("@/lib/appkit.client");
   return appkit.initAppKitClient();
+
+
 }
 
 const queryClient = new QueryClient({

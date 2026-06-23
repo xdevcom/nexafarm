@@ -96,8 +96,9 @@ export async function openAppKitModal() {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return;
   }
-  const mod = "@/lib/appkit.client";
-  const m = (await import(/* @vite-ignore */ mod)) as typeof import("@/lib/appkit.client");
+  const mod = ["@/lib", "appkit.client"].join("/");
+  const m = (await import(/* @vite-ignore */ mod)) as { openAppKitModal: () => Promise<void> };
+
   await m.openAppKitModal();
 }
 

@@ -17,7 +17,9 @@ async function initAppKitClient(): Promise<Config> {
     return ssrConfig;
   }
   const mod = "@/lib/appkit.client";
-  const appkit = await import(/* @vite-ignore */ mod);
+  const appkit = (await import(/* @vite-ignore */ mod)) as typeof import("@/lib/appkit.client");
+  return appkit.initAppKitClient();
+
 
 }
 

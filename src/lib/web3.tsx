@@ -12,49 +12,12 @@ const ssrConfig = createConfig({
   transports: { [bsc.id]: http(RPC_URL) },
 });
 
-let clientConfigPromise: Promise<Config> | undefined;
-
-function importBrowserOnly<T>(specifier: string): Promise<T> {
-  return new Function("s", "return import(s)")(specifier) as Promise<T>;
-}
-
 async function initAppKitClient(): Promise<Config> {
   if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
     return ssrConfig;
   }
-  if (clientConfigPromise) return clientConfigPromise;
-  clientConfigPromise = (async () => {
-    const [{ createAppKit }, { WagmiAdapter }] = await Promise.all([
-      importBrowserOnly<typeof import("@reown/appkit/react")>("@reown/appkit/react"),
-      importBrowserOnly<typeof import("@reown/appkit-adapter-wagmi")>("@reown/appkit-adapter-wagmi"),
-    ]);
-    const wagmiAdapter = new WagmiAdapter({
-      networks: [bsc],
-      projectId: REOWN_PROJECT_ID,
-      ssr: false,
-      transports: { [bsc.id]: http(RPC_URL) },
-    });
-    createAppKit({
-      adapters: [wagmiAdapter],
-      networks: [bsc],
-      projectId: REOWN_PROJECT_ID,
-      defaultNetwork: bsc,
-      metadata: {
-        name: "NexaFarm",
-        description: "NexaFarm — The Future of DeFi Staking",
-        url: window.location.origin,
-        icons: [],
-      },
-      features: { analytics: false, email: false, socials: false },
-      themeMode: "dark",
-      themeVariables: {
-        "--w3m-accent": "#22e07a",
-        "--w3m-border-radius-master": "12px",
-      },
-    });
-    return wagmiAdapter.wagmiConfig as unknown as Config;
-  })();
-  return clientConfigPromise;
+  const appkit = await import("@/lib/appkit.client");
+  return appkit.initAppKitClient();
 }
 
 const queryClient = new QueryClient({

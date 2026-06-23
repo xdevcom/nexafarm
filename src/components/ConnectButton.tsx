@@ -15,8 +15,9 @@ function useOpenAppKit(): () => void {
       return;
     }
     let cancelled = false;
-    const mod = "@/lib/appkit.client";
-    (import(/* @vite-ignore */ mod) as Promise<typeof import("@/lib/appkit.client")>)
+    const mod = ["@/lib", "appkit.client"].join("/");
+    (import(/* @vite-ignore */ mod) as Promise<{ openAppKitModal: () => Promise<void> }>)
+
       .then((m) => {
         if (cancelled) return;
         setOpen(() => () => {

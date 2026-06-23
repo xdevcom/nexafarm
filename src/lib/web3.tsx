@@ -15,6 +15,9 @@ const ssrConfig = createConfig({
 let clientConfigPromise: Promise<Config> | undefined;
 
 async function initAppKitClient(): Promise<Config> {
+  if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
+    return ssrConfig;
+  }
   if (clientConfigPromise) return clientConfigPromise;
   clientConfigPromise = (async () => {
     const [{ createAppKit }, { WagmiAdapter }] = await Promise.all([
@@ -57,6 +60,9 @@ const queryClient = new QueryClient({
 export function Web3Provider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<Config>(ssrConfig);
   useEffect(() => {
+    if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
+      return;
+    }
     let cancelled = false;
     initAppKitClient()
       .then((c) => {

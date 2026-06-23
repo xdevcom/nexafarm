@@ -11,6 +11,9 @@ import { useEffect, useState, useCallback } from "react";
 function useOpenAppKit(): () => void {
   const [open, setOpen] = useState<() => void>(() => () => {});
   useEffect(() => {
+    if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
+      return;
+    }
     let cancelled = false;
     import("@reown/appkit/react")
       .then((m) => {
@@ -93,6 +96,9 @@ export function ConnectButton({ block = false }: { block?: boolean }) {
 // Re-export the modal singleton helper for callers that want to open the
 // modal imperatively without going through the hook.
 export async function openAppKitModal() {
+  if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
+    return;
+  }
   const m = await import("@reown/appkit/react");
   (m as unknown as { modal?: { open: () => void } }).modal?.open?.();
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { createIsomorphicFn } from "@tanstack/react-start";
 import { WagmiProvider, createConfig, http, type Config } from "wagmi";
 import { bsc } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,13 +13,12 @@ const ssrConfig = createConfig({
   transports: { [bsc.id]: http(RPC_URL) },
 });
 
-async function initAppKitClient(): Promise<Config> {
-  if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
-    return ssrConfig;
-  }
-  const appkit = await import("./appkit-browser");
-  return appkit.initAppKitClient();
-}
+const initAppKitClient = createIsomorphicFn()
+  .server(async () => ssrConfig)
+  .client(async () => {
+    const appkit = await import("./appkit.client");
+    return appkit.initAppKitClient();
+  });
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 15_000, refetchOnWindowFocus: false } },

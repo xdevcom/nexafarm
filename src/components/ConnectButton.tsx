@@ -1,58 +1,29 @@
-import { useAccount, useDisconnect, useChainId, useSwitchChain } from "wagmi";
+import { useAccount, useDisconnect, useChainId, useSwitchChain, useConnect } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { shortAddress } from "@/lib/format";
 import { CHAIN_ID } from "@/config/contract";
 import { Wallet, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createIsomorphicFn } from "@tanstack/react-start";
-
-const loadOpenAppKitModal = createIsomorphicFn()
-  .server(async () => undefined)
-  .client(async () => {
-    const appkit = await import("@/lib/appkit.client");
-    return appkit.openAppKitModal;
-  });
-
-// Reown AppKit references browser globals (HTMLElement) at module init,
-// so we must NOT statically import from "@reown/appkit/react" anywhere
-// that runs during SSR. Load it lazily on the client instead.
-function useOpenAppKit(): () => void {
-  const [open, setOpen] = useState<() => void>(() => () => {});
-  useEffect(() => {
-    if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
-      return;
-    }
-    let cancelled = false;
-    loadOpenAppKitModal()
-      .then((openModal) => {
-        if (cancelled) return;
-        if (!openModal) return;
-        setOpen(() => () => {
-          void openModal().catch((e) => console.error(e));
-        });
-      })
-      .catch((e) => console.error("AppKit load failed", e));
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  return open;
-}
 
 function ConnectButtonInner({ block }: { block: boolean }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
-  const open = useOpenAppKit();
+  const { connect, connectors, isPending } = useConnect();
+
+  const connectWallet = () => {
+    const connector = connectors[0];
+    if (!connector) return;
+    connect({ connector, chainId: CHAIN_ID });
+  };
 
   const baseClass = `gradient-primary text-primary-foreground font-semibold animate-pulse-glow ${block ? "w-full" : ""}`;
 
   if (!isConnected) {
     return (
-      <Button onClick={() => open()} className={baseClass}>
-        <Wallet className="h-4 w-4 mr-2" /> Connect Wallet
+      <Button onClick={connectWallet} disabled={isPending} className={baseClass}>
+        <Wallet className="h-4 w-4 mr-2" /> {isPending ? "Connecting..." : "Connect Wallet"}
       </Button>
     );
   }
@@ -68,7 +39,7 @@ function ConnectButtonInner({ block }: { block: boolean }) {
   return (
     <div className={`flex items-center gap-2 ${block ? "w-full" : ""}`}>
       <button
-        onClick={() => open()}
+        onClick={connectWallet}
         className="glass rounded-lg px-3 py-1.5 text-sm font-mono text-foreground hover:bg-card flex-1 text-left"
       >
         {shortAddress(address)}
@@ -95,15 +66,5 @@ export function ConnectButton({ block = false }: { block?: boolean }) {
   }
 
   return <ConnectButtonInner block={block} />;
-}
-
-// Re-export the modal singleton helper for callers that want to open the
-// modal imperatively without going through the hook.
-export async function openAppKitModal() {
-  if (typeof window === "undefined" || typeof HTMLElement === "undefined") {
-    return;
-  }
-  const openModal = await loadOpenAppKitModal();
-  await openModal?.();
 }
 

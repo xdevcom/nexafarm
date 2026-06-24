@@ -1,12 +1,12 @@
 // NexaFarm smart contract configuration on BNB Smart Chain
-export const CHAIN_ID = 56;
-export const RPC_URL = "https://bsc-dataseed.binance.org";
-export const BSC_SCAN = "https://bscscan.com";
+export const CHAIN_ID = 97;
+export const RPC_URL = "https://misty-few-vineyard.bsc-testnet.quiknode.pro/b9c24315a4796add28d68735adffba4427238f1d";
+export const BSC_SCAN = "https://testnet.bscscan.com";
 
-export const CONTRACT_ADDRESS = "0xcFAD3800F1A91766809305bf522F4ab9dF2D4413" as const;
+export const CONTRACT_ADDRESS = "0xa06c737d7ff387738CfC9427fDd9De61E85859A3" as const;
 
 // BSC mainnet USDT (BEP-20, 18 decimals)
-export const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955" as const;
+export const USDT_ADDRESS = "0xaB1a4d4f1D656d2450692D237fdD6C7f9146e814" as const;
 export const USDT_DECIMALS = 18;
 
 export const PLANS = [

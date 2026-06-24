@@ -15,7 +15,7 @@ export function fmtUsdt(value?: bigint | string | number | null, digits = 2): st
         : typeof value === "string"
           ? Number(formatUnits(BigInt(value), USDT_DECIMALS))
           : Number(value);
-    return n.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    return n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
   } catch {
     return "0.00";
   }

@@ -108,7 +108,7 @@ function HomePage() {
         <h2 className="text-3xl md:text-4xl font-bold text-center">How It Works</h2>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {[
-            { I: Wallet, t: "1. Connect Wallet", d: "Connect any Web3 wallet via Reown AppKit on BNB Smart Chain." },
+            { I: Wallet, t: "1. Connect Wallet", d: "Connect an injected EVM wallet on BNB Smart Chain Testnet." },
             { I: Coins, t: "2. Choose Plan", d: "Pick from 30, 90, 180, or 360 day staking plans starting at 10 USDT." },
             { I: TrendingUp, t: "3. Earn Daily", d: "Withdraw your ROI any time. Get your capital back at maturity." },
           ].map(({ I, t, d }) => (

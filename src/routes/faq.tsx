@@ -16,9 +16,9 @@ const CATEGORIES: { name: string; faqs: { q: string; a: string }[] }[] = [
     name: "General Questions",
     faqs: [
       { q: "What is NexaFarm?", a: "NexaFarm is a decentralized staking protocol on BNB Smart Chain that lets you stake USDT and earn daily ROI plus referral and leadership rewards." },
-      { q: "Which blockchain does NexaFarm run on?", a: "NexaFarm runs on BNB Smart Chain (BSC) mainnet, Chain ID 56." },
+      { q: "Which blockchain does NexaFarm run on?", a: "NexaFarm runs on BNB Smart Chain Testnet, Chain ID 97." },
       { q: "Is NexaFarm custodial?", a: "No. All funds are held by the smart contract. You always control your own wallet." },
-      { q: "Which wallets are supported?", a: "Any EVM wallet via Reown AppKit / WalletConnect — MetaMask, Trust Wallet, OKX, Rabby, and more." },
+      { q: "Which wallets are supported?", a: "Any injected EVM wallet such as MetaMask, Trust Wallet browser extension, OKX, or Rabby." },
       { q: "Do I need BNB to interact with NexaFarm?", a: "Yes, a small amount of BNB is required to pay BSC gas fees." },
     ],
   },

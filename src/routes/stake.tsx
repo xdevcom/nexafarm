@@ -145,7 +145,7 @@ function StakePage() {
               {!isConnected ? (
                 <ConnectButton block />
               ) : wrongNetwork ? (
-                <Button disabled className="w-full" variant="destructive">Switch to BSC</Button>
+                <Button disabled className="w-full" variant="destructive">Switch to BNB Testnet</Button>
               ) : needsApprove ? (
                 <Button onClick={onApprove} disabled={isPending || isConfirming} className="w-full gradient-primary text-primary-foreground font-semibold">
                   {isPending || isConfirming ? "Approving..." : "Approve USDT"}
@@ -156,7 +156,7 @@ function StakePage() {
                   {isPending || isConfirming ? "Processing..." : "Stake Now"}
                 </Button>
               )}
-              <p className="text-[11px] text-muted-foreground text-center">Network: BNB Smart Chain · Token: USDT (BEP-20)</p>
+              <p className="text-[11px] text-muted-foreground text-center">Network: BNB Smart Chain Testnet · Token: USDT (BEP-20)</p>
             </div>
           </Card>
         </div>

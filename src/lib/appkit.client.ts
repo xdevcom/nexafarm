@@ -3,7 +3,7 @@ import "@tanstack/react-start/client-only";
 import { createAppKit, modal } from "@reown/appkit/react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { http, type Config } from "wagmi";
-import { bsc } from "wagmi/chains";
+import { bscTestnet } from "wagmi/chains";
 
 import { REOWN_PROJECT_ID, RPC_URL } from "@/config/contract";
 
@@ -14,17 +14,17 @@ export async function initAppKitClient(): Promise<Config> {
 
   clientConfigPromise = (async () => {
     const wagmiAdapter = new WagmiAdapter({
-      networks: [bsc],
+      networks: [bscTestnet],
       projectId: REOWN_PROJECT_ID,
       ssr: false,
-      transports: { [bsc.id]: http(RPC_URL) },
+      transports: { [bscTestnet.id]: http(RPC_URL) },
     });
 
     createAppKit({
       adapters: [wagmiAdapter],
-      networks: [bsc],
+      networks: [bscTestnet],
       projectId: REOWN_PROJECT_ID,
-      defaultNetwork: bsc,
+      defaultNetwork: bscTestnet,
       metadata: {
         name: "NexaFarm",
         description: "NexaFarm — The Future of DeFi Staking",

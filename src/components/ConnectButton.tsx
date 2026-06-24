@@ -31,7 +31,7 @@ function ConnectButtonInner({ block }: { block: boolean }) {
   if (chainId !== CHAIN_ID) {
     return (
       <Button onClick={() => switchChain({ chainId: CHAIN_ID })} variant="destructive" className={block ? "w-full" : ""}>
-        Switch to BSC
+        Switch to BNB Testnet
       </Button>
     );
   }

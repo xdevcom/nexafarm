@@ -1,4 +1,4 @@
-import { WagmiProvider, createConfig, http, type Config } from "wagmi";
+import { WagmiProvider, createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { bscTestnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

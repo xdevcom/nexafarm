@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { WagmiProvider, createConfig, http, type Config } from "wagmi";
-import { bsc } from "wagmi/chains";
+import { bscTestnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RPC_URL } from "@/config/contract";
 
@@ -9,8 +9,8 @@ import { RPC_URL } from "@/config/contract";
 // at module init (Lit web components), so they MUST NOT be imported at
 // top level — only inside a client-only dynamic import.
 const ssrConfig = createConfig({
-  chains: [bsc],
-  transports: { [bsc.id]: http(RPC_URL) },
+  chains: [bscTestnet],
+  transports: { [bscTestnet.id]: http(RPC_URL) },
 });
 
 const initAppKitClient = createIsomorphicFn()

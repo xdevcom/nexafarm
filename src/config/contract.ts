@@ -102,4 +102,4 @@ export const ERC20_ABI = [
     inputs: [], outputs: [{ name: "", type: "uint8" }] },
 ] as const;
 
-export const REOWN_PROJECT_ID = "5580701c289bf965216fbdc805428024";
+export const REOWN_PROJECT_ID = "9994e4620ba3499ea0460291f0ab4223";

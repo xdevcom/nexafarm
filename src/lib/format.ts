@@ -15,7 +15,7 @@ export function fmtUsdt(value?: bigint | string | number | null, digits = 2): st
         : typeof value === "string"
           ? Number(formatUnits(BigInt(value), USDT_DECIMALS))
           : Number(value);
-    return n.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    return n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
   } catch {
     return "0.00";
   }
@@ -24,7 +24,7 @@ export function fmtUsdt(value?: bigint | string | number | null, digits = 2): st
 export function fmtNumber(value?: bigint | number | null): string {
   if (value === undefined || value === null) return "0";
   const n = typeof value === "bigint" ? Number(value) : value;
-  return n.toLocaleString();
+  return n.toLocaleString("en-US");
 }
 
 export function fmtDate(timestamp?: bigint | number | null): string {

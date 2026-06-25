@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 
 const config = createConfig({
   chains: [bscTestnet],
+  ssr: true,
   connectors: [injected({ shimDisconnect: true })],
   transports: { [bscTestnet.id]: http(RPC_URL) },
 });

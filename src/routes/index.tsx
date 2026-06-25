@@ -123,8 +123,6 @@ function HomePage() {
                   <th className="px-6 py-4 text-left">Plan</th>
                   <th className="px-6 py-4 text-left">Duration</th>
                   <th className="px-6 py-4 text-left">Daily ROI</th>
-                  <th className="px-6 py-4 text-left">Total ROI</th>
-                  <th className="px-6 py-4 text-left">Min Deposit</th>
                 </tr>
               </thead>
               <tbody>
@@ -133,8 +131,6 @@ function HomePage() {
                     <td className="px-6 py-4 font-semibold text-primary">{p.label}</td>
                     <td className="px-6 py-4">{p.days} Days</td>
                     <td className="px-6 py-4">{p.dailyRate}%</td>
-                    <td className="px-6 py-4 text-primary font-semibold">{p.totalRoi}%</td>
-                    <td className="px-6 py-4">10 USDT</td>
                   </tr>
                 ))}
               </tbody>
@@ -144,7 +140,7 @@ function HomePage() {
         <div className="text-center mt-10">
           <Link to="/stake">
             <Button size="lg" className="gradient-primary text-primary-foreground font-semibold">
-              Stake Now <ArrowRight className="ml-2 h-4 w-4" />
+              Stake Now
             </Button>
           </Link>
         </div>

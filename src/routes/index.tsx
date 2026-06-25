@@ -2,8 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useGlobalStats } from "@/hooks/useNexaFarm";
-import { fmtNumber, fmtUsdt } from "@/lib/format";
 import { PLANS } from "@/config/contract";
 import { ShieldCheck, TrendingUp, Users, Crown, Wallet, Coins, Zap } from "lucide-react";
 

@@ -62,7 +62,6 @@ function DashboardPage() {
             <p className="text-sm text-muted-foreground">Welcome back</p>
             <h1 className="text-3xl font-bold font-mono">{shortAddress(address)}</h1>
           </div>
-          <ConnectButton />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

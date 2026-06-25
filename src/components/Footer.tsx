@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
-import { Twitter, Send, MessageCircle, BookOpen } from "lucide-react";
+import { Twitter, Send, MessageCircle } from "lucide-react";
 
 export function Footer() {
   return (
@@ -27,12 +27,11 @@ export function Footer() {
           <h4 className="text-sm font-semibold mb-3 text-foreground">Community</h4>
           <div className="flex gap-3">
             {[
-              { I: Twitter, href: "#" },
-              { I: Send, href: "#" },
-              { I: MessageCircle, href: "#" },
-              { I: BookOpen, href: "#" },
-            ].map(({ I, href }, i) => (
-              <a key={i} href={href} target="_blank" rel="noreferrer"
+              { I: Twitter, href: "#", label: "Twitter" },
+              { I: Send, href: "#", label: "Telegram" },
+              { I: MessageCircle, href: "#", label: "WhatsApp" },
+            ].map(({ I, href, label }, i) => (
+              <a key={i} href={href} target="_blank" rel="noreferrer" aria-label={label}
                  className="glass h-10 w-10 grid place-items-center rounded-lg text-foreground hover:text-primary hover:glow transition">
                 <I className="h-4 w-4" />
               </a>

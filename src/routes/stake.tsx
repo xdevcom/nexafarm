@@ -40,6 +40,7 @@ function StakePage() {
   const allowance = useUsdtAllowance();
   const deposits = useUserDeposits();
   const { run, isPending, isConfirming, isSuccess } = useTxWrite();
+  const [autoStake, setAutoStake] = useState(false);
 
   useEffect(() => {
     if (isSuccess) {
@@ -56,10 +57,15 @@ function StakePage() {
 
   async function onApprove() {
     if (amountNum < MIN_DEPOSIT) { toast.error(`Enter at least ${MIN_DEPOSIT} USDT before approving`); return; }
-    await run("Approve USDT", {
-      address: USDT_ADDRESS, abi: ERC20_ABI, functionName: "approve",
-      args: [CONTRACT_ADDRESS, toUsdt(amount)],
-    });
+    setAutoStake(true);
+    try {
+      await run("Approve USDT", {
+        address: USDT_ADDRESS, abi: ERC20_ABI, functionName: "approve",
+        args: [CONTRACT_ADDRESS, toUsdt(amount)],
+      });
+    } catch {
+      setAutoStake(false);
+    }
   }
 
   async function onStake() {
@@ -73,6 +79,15 @@ function StakePage() {
       args: [toUsdt(amount), planId, refAddr],
     });
   }
+
+  // Auto-trigger stake once approval is confirmed and allowance refreshed
+  useEffect(() => {
+    if (autoStake && !needsApprove && !isPending && !isConfirming && amountNum >= MIN_DEPOSIT) {
+      setAutoStake(false);
+      onStake();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStake, needsApprove, isPending, isConfirming]);
 
   const list = (deposits.data as DepositTuple[] | undefined) ?? [];
 
@@ -137,7 +152,7 @@ function StakePage() {
               <Row k="Plan" v={selected.label} />
               <Row k="Daily ROI" v={`${selected.dailyRate}%`} />
               <Row k="Total ROI" v={`${selected.totalRoi}%`} />
-              <Row k="Stake Amount" v={`${fmtUsdt(amountNum * 10 ** USDT_DECIMALS)} USDT`} />
+              <Row k="Stake Amount" v={`${fmtUsdt(amountNum)} USDT`} />
               <Row k="Projected Earnings" v={`${projected.toFixed(2)} USDT`} highlight />
             </dl>
 

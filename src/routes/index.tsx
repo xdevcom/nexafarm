@@ -2,10 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useGlobalStats } from "@/hooks/useNexaFarm";
-import { fmtNumber, fmtUsdt } from "@/lib/format";
 import { PLANS } from "@/config/contract";
-import { ArrowRight, ShieldCheck, TrendingUp, Users, Crown, Wallet, Coins, Zap } from "lucide-react";
+import { ShieldCheck, TrendingUp, Users, Crown, Wallet, Coins, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,10 +18,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const stats = useGlobalStats();
-  const totalUsers = stats.data?.[0]?.result as bigint | undefined;
-  const tvl = stats.data?.[1]?.result as bigint | undefined;
-
   return (
     <PageShell>
       {/* HERO */}
@@ -46,19 +40,12 @@ function HomePage() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link to="/stake">
               <Button size="lg" className="gradient-primary text-primary-foreground font-semibold animate-pulse-glow">
-                Start Staking <ArrowRight className="ml-2 h-4 w-4" />
+                Start Staking
               </Button>
             </Link>
             <Link to="/dashboard">
               <Button size="lg" variant="outline" className="border-primary/40">View Dashboard</Button>
             </Link>
-          </div>
-
-          {/* Counter */}
-          <div className="mt-14 grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <StatCard label="Total Users" value={fmtNumber(totalUsers ?? 0n)} icon={<Users className="h-5 w-5" />} loading={stats.isLoading} />
-            <StatCard label="Total Value Locked" value={`$${fmtUsdt(tvl ?? 0n, 0)}`} icon={<Coins className="h-5 w-5" />} loading={stats.isLoading} />
-            <StatCard label="Max Daily ROI" value="0.50%" icon={<TrendingUp className="h-5 w-5" />} />
           </div>
         </div>
       </section>
@@ -134,8 +121,6 @@ function HomePage() {
                   <th className="px-6 py-4 text-left">Plan</th>
                   <th className="px-6 py-4 text-left">Duration</th>
                   <th className="px-6 py-4 text-left">Daily ROI</th>
-                  <th className="px-6 py-4 text-left">Total ROI</th>
-                  <th className="px-6 py-4 text-left">Min Deposit</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,8 +129,6 @@ function HomePage() {
                     <td className="px-6 py-4 font-semibold text-primary">{p.label}</td>
                     <td className="px-6 py-4">{p.days} Days</td>
                     <td className="px-6 py-4">{p.dailyRate}%</td>
-                    <td className="px-6 py-4 text-primary font-semibold">{p.totalRoi}%</td>
-                    <td className="px-6 py-4">10 USDT</td>
                   </tr>
                 ))}
               </tbody>
@@ -155,25 +138,11 @@ function HomePage() {
         <div className="text-center mt-10">
           <Link to="/stake">
             <Button size="lg" className="gradient-primary text-primary-foreground font-semibold">
-              Stake Now <ArrowRight className="ml-2 h-4 w-4" />
+              Stake Now
             </Button>
           </Link>
         </div>
       </section>
     </PageShell>
-  );
-}
-
-function StatCard({ label, value, icon, loading }: { label: string; value: string; icon: React.ReactNode; loading?: boolean }) {
-  return (
-    <div className="glass rounded-xl p-5 text-left">
-      <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
-        <span className="text-primary">{icon}</span>
-      </div>
-      <div className="mt-2 text-2xl font-bold text-foreground">
-        {loading ? <span className="inline-block h-7 w-24 rounded shimmer" /> : value}
-      </div>
-    </div>
   );
 }

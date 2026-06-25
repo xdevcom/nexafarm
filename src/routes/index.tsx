@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { useGlobalStats } from "@/hooks/useNexaFarm";
 import { fmtNumber, fmtUsdt } from "@/lib/format";
 import { PLANS } from "@/config/contract";
-import { ArrowRight, ShieldCheck, TrendingUp, Users, Crown, Wallet, Coins, Zap } from "lucide-react";
+import { ShieldCheck, TrendingUp, Users, Crown, Wallet, Coins, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({

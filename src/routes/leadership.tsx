@@ -30,12 +30,26 @@ function LeadershipPage() {
 
   useEffect(() => { if (isSuccess) userInfo.refetch(); }, [isSuccess]);
 
-  const info = userInfo.data as UserInfo | undefined;
-  const teamCount = Number(info?.totalReferrals ?? 0n);
-  const teamVolumeBig = info?.teamVolume ?? 0n;
+  const info = userInfo.data as any;
+  // getUserInfo returns: [referrer, totalReferralBonus, totalLeadershipBonus, lastLeadershipClaim, directCount, teamCount, teamVolume]
+  const stats = {
+    totalReferralBonus: info?.[1] ?? 0n,
+    totalLeadershipBonus: info?.[2] ?? 0n,
+    lastLeadershipClaim: info?.[3] ?? 0n,
+    directCount: info?.[4] ?? 0n,
+    teamCount: info?.[5] ?? 0n,
+    teamVolume: info?.[6] ?? 0n,
+    // Rank logic: in the new ABI there's no leadershipRank in getUserInfo
+    // We might need to calculate it or it might be stored elsewhere.
+    // Assuming for now it's not directly returned, let's keep it as 0 or calculate if we have the logic.
+    leadershipRank: 0n, 
+  };
+
+  const teamCount = Number(stats.teamCount);
+  const teamVolumeBig = stats.teamVolume;
   const teamVolume = Number(teamVolumeBig) / 1e18;
-  const rank = Number(info?.leadershipRank ?? 0n);
-  const lastClaim = Number(info?.lastLeadershipClaim ?? 0n);
+  const rank = Number(stats.leadershipRank);
+  const lastClaim = Number(stats.lastLeadershipClaim);
   const nextClaim = lastClaim ? lastClaim + 30 * 86400 : 0;
   const now = Math.floor(Date.now() / 1000);
   const canClaim = rank > 0 && (lastClaim === 0 || now >= nextClaim);

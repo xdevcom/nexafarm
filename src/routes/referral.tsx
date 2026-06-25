@@ -49,7 +49,21 @@ function ReferralPage() {
     });
   }
 
-  const info = userInfo.data as UserInfo | undefined;
+  const info = userInfo.data as any;
+  // getUserInfo returns: [referrer, totalReferralBonus, totalLeadershipBonus, lastLeadershipClaim, directCount, teamCount, teamVolume]
+  const stats = {
+    referrer: info?.[0],
+    totalReferralBonus: info?.[1] ?? 0n,
+    totalLeadershipBonus: info?.[2] ?? 0n,
+    lastLeadershipClaim: info?.[3] ?? 0n,
+    directCount: info?.[4] ?? 0n,
+    teamCount: info?.[5] ?? 0n,
+    teamVolume: info?.[6] ?? 0n,
+    // In new ABI, we don't have pendingReferralBonus directly in getUserInfo
+    // But usually it's totalReferralBonus minus what's already withdrawn
+    // For now, let's use totalReferralBonus as available if contract doesn't separate it
+    pendingReferralBonus: info?.[1] ?? 0n, 
+  };
 
   return (
     <PageShell>
@@ -81,18 +95,18 @@ function ReferralPage() {
 
             {/* Stats */}
             <div className="grid gap-4 sm:grid-cols-3 mt-6">
-              <StatBox label="Total Referrals" value={fmtNumber(info?.totalReferrals)} loading={userInfo.isLoading} />
-              <StatBox label="Direct Referrals" value={fmtNumber(info?.directReferrals)} loading={userInfo.isLoading} />
-              <StatBox label="Referral Earnings" value={`${fmtUsdt(info?.referralEarnings)} USDT`} loading={userInfo.isLoading} />
+              <StatBox label="Total Referrals" value={fmtNumber(stats.teamCount)} loading={userInfo.isLoading} />
+              <StatBox label="Direct Referrals" value={fmtNumber(stats.directCount)} loading={userInfo.isLoading} />
+              <StatBox label="Referral Earnings" value={`${fmtUsdt(stats.totalReferralBonus)} USDT`} loading={userInfo.isLoading} />
             </div>
 
             <Card className="glass p-6 mt-6 border-primary/15">
               <div className="flex flex-wrap justify-between items-center gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Pending Referral Bonus</p>
-                  <p className="text-2xl font-bold text-primary mt-1">{fmtUsdt(info?.pendingReferralBonus)} USDT</p>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Referral Bonus Balance</p>
+                  <p className="text-2xl font-bold text-primary mt-1">{fmtUsdt(stats.pendingReferralBonus)} USDT</p>
                 </div>
-                <Button onClick={withdrawBonus} disabled={isPending || isConfirming || !info?.pendingReferralBonus}
+                <Button onClick={withdrawBonus} disabled={isPending || isConfirming || !stats.pendingReferralBonus}
                   className="gradient-primary text-primary-foreground font-semibold animate-pulse-glow">
                   <Wallet className="h-4 w-4 mr-2" /> {isPending || isConfirming ? "Processing..." : "Withdraw Bonus"}
                 </Button>

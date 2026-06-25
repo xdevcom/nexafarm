@@ -18,69 +18,8 @@ export const PLANS = [
 
 export const MIN_DEPOSIT = 10;
 
-// Minimal ABI for NexaFarm staking contract — covers all UI flows.
-// Replace with the full deployed ABI if additional functions are needed.
-export const CONTRACT_ABI = [
-  // ---- Writes ----
-  { type: "function", name: "deposit",
-    inputs: [
-      { name: "amount", type: "uint256" },
-      { name: "planId", type: "uint8" },
-      { name: "referrer", type: "address" },
-    ], outputs: [], stateMutability: "nonpayable" },
-  { type: "function", name: "withdrawROI",
-    inputs: [{ name: "depositIndex", type: "uint256" }],
-    outputs: [], stateMutability: "nonpayable" },
-  { type: "function", name: "withdrawCapital",
-    inputs: [{ name: "depositIndex", type: "uint256" }],
-    outputs: [], stateMutability: "nonpayable" },
-  { type: "function", name: "withdrawReferralBonus",
-    inputs: [], outputs: [], stateMutability: "nonpayable" },
-  { type: "function", name: "claimLeadershipBonus",
-    inputs: [], outputs: [], stateMutability: "nonpayable" },
-
-  // ---- Reads ----
-  { type: "function", name: "getUserInfo", stateMutability: "view",
-    inputs: [{ name: "user", type: "address" }],
-    outputs: [
-      { name: "totalDeposit",       type: "uint256" },
-      { name: "totalRoiEarned",     type: "uint256" },
-      { name: "referralEarnings",   type: "uint256" },
-      { name: "leadershipEarnings", type: "uint256" },
-      { name: "directReferrals",    type: "uint256" },
-      { name: "totalReferrals",     type: "uint256" },
-      { name: "teamVolume",         type: "uint256" },
-      { name: "leadershipRank",     type: "uint256" },
-      { name: "lastLeadershipClaim",type: "uint256" },
-      { name: "pendingReferralBonus", type: "uint256" },
-    ],
-  },
-  { type: "function", name: "getUserDeposits", stateMutability: "view",
-    inputs: [{ name: "user", type: "address" }],
-    outputs: [{
-      name: "deposits", type: "tuple[]",
-      components: [
-        { name: "amount",      type: "uint256" },
-        { name: "planId",      type: "uint8"   },
-        { name: "startTime",   type: "uint256" },
-        { name: "endTime",     type: "uint256" },
-        { name: "lastClaim",   type: "uint256" },
-        { name: "totalClaimed",type: "uint256" },
-        { name: "withdrawn",   type: "bool"    },
-      ],
-    }],
-  },
-  { type: "function", name: "totalUsers", stateMutability: "view",
-    inputs: [], outputs: [{ name: "", type: "uint256" }] },
-  { type: "function", name: "totalValueLocked", stateMutability: "view",
-    inputs: [], outputs: [{ name: "", type: "uint256" }] },
-  { type: "function", name: "pendingROI", stateMutability: "view",
-    inputs: [
-      { name: "user", type: "address" },
-      { name: "depositIndex", type: "uint256" },
-    ],
-    outputs: [{ name: "", type: "uint256" }] },
-] as const;
+// Full ABI provided by the user
+export const CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"_adminWallet","type":"address"},{"internalType":"uint256","name":"_lpPositionId","type":"uint256"},{"internalType":"bool","name":"_usdtIsToken0","type":"bool"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"OwnableInvalidOwner","type":"error"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"OwnableUnauthorizedAccount","type":"error"},{"inputs":[],"name":"ReentrancyGuardReentrantCall","type":"error"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"SafeERC20FailedOperation","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newWallet","type":"address"}],"name":"AdminWalletUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"depositIndex","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"CapitalWithdrawn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"enum NF.Plan","name":"plan","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"endTime","type":"uint256"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"level","type":"uint256"}],"name":"LeadershipBonusPaid","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"depositIndex","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ROIWithdrawn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"level","type":"uint256"}],"name":"ReferralBonusPaid","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ReferralBonusWithdrawn","type":"event"},{"inputs":[],"name":"DAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"HOUR","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MIN_DEPOSIT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MIN_WITHDRAW","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MONTH","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PERCENTS_DIVIDER","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"SERVICE_FEE_PCT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"adminWallet","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"claimLeadershipBonus","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"enum NF.Plan","name":"_plan","type":"uint8"},{"internalType":"address","name":"_referrer","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"directReferrals","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"getActiveDepositsCount","outputs":[{"internalType":"uint256","name":"count","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getContractStats","outputs":[{"internalType":"uint256","name":"_totalUsers","type":"uint256"},{"internalType":"uint256","name":"_totalDeposited","type":"uint256"},{"internalType":"uint256","name":"_totalPaidOut","type":"uint256"},{"internalType":"uint256","name":"_totalReferralPaid","type":"uint256"},{"internalType":"uint256","name":"_totalLeadershipPaid","type":"uint256"},{"internalType":"uint256","name":"_totalActiveDeposits","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"getDepositCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"},{"internalType":"uint256","name":"_index","type":"uint256"}],"name":"getDepositInfo","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"planId","type":"uint256"},{"internalType":"uint256","name":"startTime","type":"uint256"},{"internalType":"uint256","name":"endTime","type":"uint256"},{"internalType":"uint256","name":"lastWithdrawTime","type":"uint256"},{"internalType":"uint256","name":"totalWithdrawn","type":"uint256"},{"internalType":"bool","name":"withdrawn","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"getDirectReferrals","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"},{"internalType":"uint256","name":"_depositIndex","type":"uint256"}],"name":"getPendingROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"getTotalActiveDepositAmount","outputs":[{"internalType":"uint256","name":"total","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"getUserInfo","outputs":[{"internalType":"address","name":"referrer","type":"address"},{"internalType":"uint256","name":"totalReferralBonus","type":"uint256"},{"internalType":"uint256","name":"totalLeadershipBonus","type":"uint256"},{"internalType":"uint256","name":"lastLeadershipClaim","type":"uint256"},{"internalType":"uint256","name":"directCount","type":"uint256"},{"internalType":"uint256","name":"teamCount","type":"uint256"},{"internalType":"uint256","name":"teamVolume","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_newWallet","type":"address"}],"name":"setAdminWallet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"totalActiveDeposits","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalDeposited","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalLeadershipPaid","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalPaidOut","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalReferralPaid","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalUsers","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"users","outputs":[{"internalType":"address","name":"referrer","type":"address"},{"internalType":"uint256","name":"totalReferralBonus","type":"uint256"},{"internalType":"uint256","name":"totalLeadershipBonus","type":"uint256"},{"internalType":"uint256","name":"lastLeadershipClaim","type":"uint256"},{"internalType":"uint256","name":"directCount","type":"uint256"},{"internalType":"uint256","name":"teamCount","type":"uint256"},{"internalType":"uint256","name":"teamVolume","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_depositIndex","type":"uint256"}],"name":"withdrawCapital","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_depositIndex","type":"uint256"}],"name":"withdrawROI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdrawReferralBonus","outputs":[],"stateMutability":"nonpayable","type":"function"}] as const;
 
 export const ERC20_ABI = [
   { type: "function", name: "balanceOf", stateMutability: "view",

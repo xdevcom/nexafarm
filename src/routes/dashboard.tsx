@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ConnectButton } from "@/components/ConnectButton";
-import { useUserDeposits, useUserInfo, useTxWrite, type DepositTuple, type UserInfo } from "@/hooks/useNexaFarm";
+import { useUserDeposits, useUserInfo, useUserActiveDepositAmount, useTxWrite, type DepositTuple, type UserInfo } from "@/hooks/useNexaFarm";
 import { fmtUsdt, fmtDate, shortAddress, countdown } from "@/lib/format";
 import { PLANS, CONTRACT_ABI, CONTRACT_ADDRESS } from "@/config/contract";
 import { Coins, TrendingUp, Users, Crown } from "lucide-react";
@@ -19,10 +19,17 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
   const { address, isConnected } = useAccount();
   const userInfo = useUserInfo();
+  const userActiveDeposit = useUserActiveDepositAmount();
   const deposits = useUserDeposits();
   const { run, isPending, isConfirming, isSuccess } = useTxWrite();
 
-  useEffect(() => { if (isSuccess) { userInfo.refetch(); deposits.refetch(); } }, [isSuccess]);
+  useEffect(() => { 
+    if (isSuccess) { 
+      userInfo.refetch(); 
+      userActiveDeposit.refetch();
+      deposits.refetch(); 
+    } 
+  }, [isSuccess]);
 
   // Tick every minute for countdown
   const [, setTick] = useState(0);
@@ -40,7 +47,8 @@ function DashboardPage() {
     );
   }
 
-  const info = userInfo.data as UserInfo | undefined;
+  const info = userInfo.data as any;
+  const activeDepositAmount = userActiveDeposit.data as bigint | undefined;
   const list = (deposits.data as DepositTuple[] | undefined) ?? [];
 
   async function withdrawRoi(i: number) {
@@ -54,6 +62,15 @@ function DashboardPage() {
     });
   }
 
+  // Map contract data to UI fields
+  // getUserInfo returns: [referrer, totalReferralBonus, totalLeadershipBonus, lastLeadershipClaim, directCount, teamCount, teamVolume]
+  const stats = {
+    totalActiveDeposit: activeDepositAmount ?? 0n,
+    totalRoiEarned: list.reduce((acc, d) => acc + (d.totalWithdrawn || 0n), 0n),
+    referralEarnings: info?.[1] ?? 0n,
+    leadershipEarnings: info?.[2] ?? 0n,
+  };
+
   return (
     <PageShell>
       <section className="container mx-auto px-4 py-12 max-w-6xl">
@@ -65,10 +82,10 @@ function DashboardPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat label="Total Active Deposit" value={`${fmtUsdt(info?.totalDeposit)} USDT`} icon={<Coins className="h-5 w-5" />} loading={userInfo.isLoading} />
-          <Stat label="Total ROI Earned" value={`${fmtUsdt(info?.totalRoiEarned)} USDT`} icon={<TrendingUp className="h-5 w-5" />} loading={userInfo.isLoading} />
-          <Stat label="Referral Earnings" value={`${fmtUsdt(info?.referralEarnings)} USDT`} icon={<Users className="h-5 w-5" />} loading={userInfo.isLoading} />
-          <Stat label="Leadership Earnings" value={`${fmtUsdt(info?.leadershipEarnings)} USDT`} icon={<Crown className="h-5 w-5" />} loading={userInfo.isLoading} />
+          <Stat label="Total Active Deposit" value={`${fmtUsdt(stats.totalActiveDeposit)} USDT`} icon={<Coins className="h-5 w-5" />} loading={userActiveDeposit.isLoading} />
+          <Stat label="Total ROI Earned" value={`${fmtUsdt(stats.totalRoiEarned)} USDT`} icon={<TrendingUp className="h-5 w-5" />} loading={deposits.isLoading} />
+          <Stat label="Referral Earnings" value={`${fmtUsdt(stats.referralEarnings)} USDT`} icon={<Users className="h-5 w-5" />} loading={userInfo.isLoading} />
+          <Stat label="Leadership Earnings" value={`${fmtUsdt(stats.leadershipEarnings)} USDT`} icon={<Crown className="h-5 w-5" />} loading={userInfo.isLoading} />
         </div>
 
         <Card className="glass mt-10 p-0 overflow-hidden border-primary/15">

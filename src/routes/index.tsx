@@ -146,17 +146,3 @@ function HomePage() {
     </PageShell>
   );
 }
-
-function StatCard({ label, value, icon, loading }: { label: string; value: string; icon: React.ReactNode; loading?: boolean }) {
-  return (
-    <div className="glass rounded-xl p-5 text-left">
-      <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
-        <span className="text-primary">{icon}</span>
-      </div>
-      <div className="mt-2 text-2xl font-bold text-foreground">
-        {loading ? <span className="inline-block h-7 w-24 rounded shimmer" /> : value}
-      </div>
-    </div>
-  );
-}

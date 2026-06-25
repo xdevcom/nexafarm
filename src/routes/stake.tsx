@@ -152,7 +152,7 @@ function StakePage() {
               <Row k="Plan" v={selected.label} />
               <Row k="Daily ROI" v={`${selected.dailyRate}%`} />
               <Row k="Total ROI" v={`${selected.totalRoi}%`} />
-              <Row k="Stake Amount" v={`${fmtUsdt(amountNum * 10 ** USDT_DECIMALS)} USDT`} />
+              <Row k="Stake Amount" v={`${fmtUsdt(amountNum)} USDT`} />
               <Row k="Projected Earnings" v={`${projected.toFixed(2)} USDT`} highlight />
             </dl>
 

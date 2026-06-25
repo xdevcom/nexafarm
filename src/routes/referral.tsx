@@ -33,6 +33,7 @@ function ReferralPage() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const link = address ? `${origin}/stake?ref=${address}` : "";
+  const shortLink = address ? `${origin}/stake?ref=${address.slice(0, 4)}...` : "";
 
   function copy() {
     if (!link) return;
@@ -67,7 +68,10 @@ function ReferralPage() {
             <Card className="glass p-6 mt-8 border-primary/15">
               <label className="text-xs uppercase tracking-wider text-muted-foreground">Your Referral Link</label>
               <div className="mt-2 flex flex-col sm:flex-row gap-2">
-                <div className="flex-1 glass rounded-lg px-4 py-3 text-sm font-mono break-all">{link}</div>
+                <div className="flex-1 glass rounded-lg px-4 py-3 text-sm font-mono">
+                  <span className="sm:hidden">{shortLink}</span>
+                  <span className="hidden sm:inline break-all">{link}</span>
+                </div>
                 <Button onClick={copy} className="gradient-primary text-primary-foreground font-semibold">
                   {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />} {copied ? "Copied" : "Copy"}
                 </Button>
